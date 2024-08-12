@@ -1,0 +1,29 @@
+{
+  "name": "turbolabit/service-entity-plus-bundle",
+  "description": "",
+  "type": "symfony-bundle",
+  "license": "CC-BY-4.0",
+  "authors": [{
+      "name": "Zane di TurboLab.it",
+      "email": "info@turbolab.it"
+  }],
+  "require": {
+    "php": "^8"
+  },
+  "autoload": {
+    "psr-4": {
+      "TurboLabIt\\ServiceEntityPlusBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TurboLabIt\\ServiceEntityPlusBundle\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "symfony/framework-bundle": "@stable",
+    "symfony/dotenv": "@stable",
+    "symfony/yaml": "@stable",
+    "phpunit/phpunit": "@stable"
+  }
+}
