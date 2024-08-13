@@ -1,0 +1,4 @@
+#services:
+    #TurboLabIt\ServiceEntityPlusBundle\Service\MyService:
+      #autowire: true
+      #public: true
