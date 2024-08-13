@@ -183,6 +183,11 @@ abstract class SEPRepository extends ServiceEntityRepository
         foreach($arrIds as $id) {
 
             $id = (string)$id;
+
+            if( !array_key_exists($id, $arrEntitiesUnorderd) ) {
+                continue;
+            }
+
             $arrEntities[$id] = $arrEntitiesUnorderd[$id];
         }
 
