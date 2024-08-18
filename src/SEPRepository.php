@@ -203,10 +203,10 @@ abstract class SEPRepository extends ServiceEntityRepository
     public function getAllComplete() : array
     {
         return
-            $this->arrAllEntitiesCache = $this->arrEntityCache = $this->internalGetById($this->getQueryBuilderComplete());
+            $this->arrAllEntitiesCache = $this->arrEntityCache = $this->internalGetAll($this->getQueryBuilderComplete());
     }
 
-    protected function internalGetAll(QueryBuilder $qb, array $arrIds) : array
+    protected function internalGetAll(QueryBuilder $qb) : array
     {
         if( !empty($this->arrAllEntitiesCache) ) {
             return $this->arrAllEntitiesCache;
