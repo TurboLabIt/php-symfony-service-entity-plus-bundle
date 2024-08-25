@@ -50,11 +50,38 @@ abstract class SEPCollection extends ForeachableCollection
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** ➕ add items ***">
+    public function addId(array|int $ids) : static { return $this->internalAdd($ids, 'getById'); }
+
+    public function addIdComplete(array|int $ids) : static { return $this->internalAdd($ids, 'getByIdComplete'); }
+
+    protected function internalAdd(array|int $ids, string $preferredMethodName) : static
+    {
+        $arrIds     = is_array($ids) ? $ids : [$ids];
+        $repository = $this->em->getRepository(static::ENTITY_CLASS);
+        $entities   = method_exists($repository, $preferredMethodName)
+            ? $repository->$preferredMethodName($arrIds) : $repository->findBy(['id' => $arrIds]);
+
+        return $this->addEntities($entities);
+    }
+    //</editor-fold>
+
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔨 setEntities ***">
     public function setEntities(?iterable $entities) : static
     {
-        $this->clear();
+        $this
+            ->clear()
+            ->addEntities($entities);
+
+        $this->countTotalBeforePagination = $this->calculateTotalBeforePagination($entities);
+
+        return $this;
+    }
+
+
+    public function addEntities(?iterable $entities) : static
+    {
         $entities = empty($entities) ? [] : $entities;
         foreach($entities as $entity) {
 
@@ -62,8 +89,6 @@ abstract class SEPCollection extends ForeachableCollection
             $service            = $this->createService($entity);
             $this->arrData[$id] = $service;
         }
-
-        $this->countTotalBeforePagination = $this->calculateTotalBeforePagination($entities);
 
         return $this;
     }
