@@ -129,7 +129,8 @@ abstract class SEPRepository extends ServiceEntityRepository
             return $entity;
         }
 
-        $newEntity = new $this->_entityName();
+        $entityName = $this->getEntityName();
+        $newEntity  = new $entityName();
 
         if( !empty($id) && method_exists($newEntity, 'setId') ) {
             $newEntity->setId($id);
