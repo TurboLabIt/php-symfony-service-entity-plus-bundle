@@ -14,9 +14,7 @@ abstract class SEPCollection extends ForeachableCollection
     protected int $countTotalBeforePagination = 0;
     //</editor-fold>
 
-
     public function __construct(protected EntityManagerInterface $em) {}
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🏗️ load by IDs ***">
     public function load(array|int $ids) : static { return $this->internalLoad($ids, 'getById'); }
@@ -33,7 +31,6 @@ abstract class SEPCollection extends ForeachableCollection
         return $this->setEntities($entities);
     }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🏗️ load all ***">
     public function loadAll() : static { return $this->internalLoadAll('getAll'); }
@@ -65,7 +62,6 @@ abstract class SEPCollection extends ForeachableCollection
         return $this->addEntities($entities);
     }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔨 setEntities ***">
     public function setEntities(?iterable $entities) : static
@@ -108,11 +104,9 @@ abstract class SEPCollection extends ForeachableCollection
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 🔢 Count ***">
     public function countTotalBeforePagination(): int { return $this->countTotalBeforePagination; }
     //</editor-fold>
-
 
     // ⚠️ Implement the following abstract method as if they were uncommented
     // (different types in signatures make an anctual abstract method unusable here)
