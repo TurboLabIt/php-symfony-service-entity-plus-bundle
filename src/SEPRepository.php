@@ -10,6 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 abstract class SEPRepository extends ServiceEntityRepository
 {
     const string ENTITY_CLASS               = '';
+    const string ID_FIELD                   = 't.id';
     const string DEFAULT_INDEXED_BY         = 't.id';
     const string DEFAULT_ORDER_BY           = '';
     const string DEFAULT_ORDER_DIRECTION    = 'DESC';
@@ -50,7 +51,7 @@ abstract class SEPRepository extends ServiceEntityRepository
 
         return
             $this->getQueryBuilderComplete()
-                ->andWhere('t.id IN (:ids)')
+                ->andWhere(static::ID_FIELD . ' IN (:ids)')
                     ->setParameter("ids", $arrIds);
     }
     //</editor-fold>
@@ -175,7 +176,7 @@ abstract class SEPRepository extends ServiceEntityRepository
 
         $arrEntitiesUnorderd =
             $qb
-                ->andWhere('t.id IN(:ids)')
+                ->andWhere(static::ID_FIELD . ' IN(:ids)')
                     ->setParameter('ids', $arrIds)
                 ->getQuery()
                 ->getResult();
