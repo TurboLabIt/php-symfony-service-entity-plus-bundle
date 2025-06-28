@@ -26,10 +26,42 @@ abstract class SEPRepository extends ServiceEntityRepository
 
     //<editor-fold defaultstate="collapsed" desc="*** 👷 Query Builders ***">
     protected function getQueryBuilder() : QueryBuilder
-        { return $this->addDefaultOrderBy( $this->createQueryBuilder('t', static::DEFAULT_INDEXED_BY) ); }
+    {
+        return $this->addDefaultOrderBy( $this->createQueryBuilder('t', static::DEFAULT_INDEXED_BY) );
+    }
 
 
     protected function getQueryBuilderComplete() : QueryBuilder { return $this->getQueryBuilder(); }
+
+
+    public function getQueryBuilderFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : ?QueryBuilder
+    {
+        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams);
+
+        if( empty($arrIds) ) {
+            return null;
+        }
+
+        return
+            $this->getQueryBuilder()
+                ->andWhere(static::ID_FIELD . ' IN (:ids)')
+                    ->setParameter("ids", $arrIds);
+    }
+
+
+    public function getQueryBuilderCompleteFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : ?QueryBuilder
+    {
+        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams);
+
+        if( empty($arrIds) ) {
+            return null;
+        }
+
+        return
+            $this->getQueryBuilderComplete()
+                ->andWhere(static::ID_FIELD . ' IN (:ids)')
+                    ->setParameter("ids", $arrIds);
+    }
 
 
     protected function addDefaultOrderBy(QueryBuilder $qb) : QueryBuilder
@@ -40,26 +72,26 @@ abstract class SEPRepository extends ServiceEntityRepository
 
         return $qb;
     }
-
-
-    public function getQueryBuilderCompleteFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : ?QueryBuilder
-    {
-        $arrIds = $this->sqlQueryExecute($sqlToSelectIds, $arrSqlSelectParams)->fetchFirstColumn();
-        if( empty($arrIds) ) {
-            return null;
-        }
-
-        return
-            $this->getQueryBuilderComplete()
-                ->andWhere(static::ID_FIELD . ' IN (:ids)')
-                    ->setParameter("ids", $arrIds);
-    }
     //</editor-fold>
 
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ SQL ***">
+    public function getIdsFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : array
+    {
+        $arrIds = $this->sqlQueryExecute($sqlToSelectIds, $arrSqlSelectParams)->fetchFirstColumn();
+
+        if( empty($arrIds) ) {
+            return [];
+        }
+
+        return $arrIds;
+    }
+
+
     protected function getTableName(string $wrapper = "`") : string
-        { return $wrapper . $this->getEntityManager()->getClassMetadata($this->getClassName())->getTableName() . $wrapper; }
+    {
+        return $wrapper . $this->getEntityManager()->getClassMetadata($this->getClassName())->getTableName() . $wrapper;
+    }
 
 
     protected function sqlQueryExecute(string $sqlQuery, array $arrParams = []) : Result
@@ -178,8 +210,7 @@ abstract class SEPRepository extends ServiceEntityRepository
             $qb
                 ->andWhere(static::ID_FIELD . ' IN(:ids)')
                     ->setParameter('ids', $arrIds)
-                ->getQuery()
-                ->getResult();
+                ->getQuery()->getResult();
 
         $arrEntities = [];
         foreach($arrIds as $id) {
