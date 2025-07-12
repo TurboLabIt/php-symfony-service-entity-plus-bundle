@@ -74,7 +74,6 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ SQL ***">
     public function getIdsFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : array
     {
@@ -116,11 +115,25 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="*** 🦠 Parameters builder ***">
+    protected function prepareParamForLikeCondition(string $input) : string
+    {
+        $escapeChar = '\\';
+
+        // escape the escape character itself FIRST to avoid double-escaping
+        $escapedTerm = str_ireplace($escapeChar, $escapeChar . $escapeChar, $input);
+
+        // escape the LIKE wildcard characters
+        $escapedTerm = str_replace(['%', '_'], [$escapeChar . '%', $escapeChar . '_'], $escapedTerm);
+
+        return $escapedTerm;
+    }
+    //</editor-fold>
+
 
     //<editor-fold defaultstate="collapsed" desc="** 📝 Updaters **">
     public function countOneView(int $entityId) : void { $this->increase("views", $entityId); }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** ⚡ Cached items ***">
     protected function getFromCache(array $arrIds) : false|array
@@ -173,7 +186,6 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 get by IDs ***">
     public function getOneById(int $id) : mixed
     {
@@ -201,6 +213,10 @@ abstract class SEPRepository extends ServiceEntityRepository
 
     protected function internalGetById(QueryBuilder $qb, array $arrIds) : array
     {
+        if( empty($arrIds) ) {
+            return [];
+        }
+
         $arrFromCache = $this->getFromCache($arrIds);
         if( !empty($arrFromCache) ) {
             return $arrFromCache;
@@ -227,7 +243,6 @@ abstract class SEPRepository extends ServiceEntityRepository
         return $arrEntities;
     }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 get all ***">
     public function getAll() : array { return $this->internalGetAll($this->getQueryBuilder()); }
