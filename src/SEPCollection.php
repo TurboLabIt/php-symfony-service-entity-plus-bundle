@@ -23,11 +23,9 @@ abstract class SEPCollection extends ForeachableCollection
 
     protected function internalLoad(array|int $ids, string $preferredMethodName) : static
     {
-        $arrIds     = is_array($ids) ? $ids : [$ids];
+        $arrIds = is_array($ids) ? $ids : [$ids];
         $repository = $this->em->getRepository(static::ENTITY_CLASS);
-        $entities   = method_exists($repository, $preferredMethodName)
-            ? $repository->$preferredMethodName($arrIds) : $repository->findBy(['id' => $arrIds]);
-
+        $entities = method_exists($repository, $preferredMethodName) ? $repository->$preferredMethodName($arrIds) : $repository->findBy(['id' => $arrIds]);
         return $this->setEntities($entities);
     }
     //</editor-fold>
@@ -40,10 +38,16 @@ abstract class SEPCollection extends ForeachableCollection
     protected function internalLoadAll(string $preferredMethodName) : static
     {
         $repository = $this->em->getRepository(static::ENTITY_CLASS);
-        $entities   = method_exists($repository, $preferredMethodName)
-            ? $repository->$preferredMethodName() : $repository->findAll();
-
+        $entities = method_exists($repository, $preferredMethodName) ? $repository->$preferredMethodName() : $repository->findAll();
         return $this->setEntities($entities);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🔍 load by Search ***">
+    public function loadByComparableSearch(string $comparableText, string $fieldToCompare) : static
+    {
+        $arrIds = $this->em->getRepository(static::ENTITY_CLASS)->getIdsByComparableSearch($comparableText, $fieldToCompare);
+        return $this->load($arrIds);
     }
     //</editor-fold>
 
@@ -56,8 +60,7 @@ abstract class SEPCollection extends ForeachableCollection
     {
         $arrIds     = is_array($ids) ? $ids : [$ids];
         $repository = $this->em->getRepository(static::ENTITY_CLASS);
-        $entities   = method_exists($repository, $preferredMethodName)
-            ? $repository->$preferredMethodName($arrIds) : $repository->findBy(['id' => $arrIds]);
+        $entities   = method_exists($repository, $preferredMethodName) ? $repository->$preferredMethodName($arrIds) : $repository->findBy(['id' => $arrIds]);
 
         return $this->addEntities($entities);
     }

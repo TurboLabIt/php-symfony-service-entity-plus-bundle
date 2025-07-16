@@ -72,6 +72,12 @@ abstract class SEPRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+
+    protected function getTableName(string $wrapper = "`") : string
+    {
+        return $wrapper . $this->getEntityManager()->getClassMetadata($this->getClassName())->getTableName() . $wrapper;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ SQL ***">
@@ -87,9 +93,14 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    protected function getTableName(string $wrapper = "`") : string
+    public function getIdsByComparableSearch(string $comparableText, string $fieldToCompare) : array
     {
-        return $wrapper . $this->getEntityManager()->getClassMetadata($this->getClassName())->getTableName() . $wrapper;
+        $sqlToSelectIds = "
+            SELECT id FROM " . $this->getTableName() . "
+            WHERE REGEXP_REPLACE(LOWER(`$fieldToCompare`), '[^a-z0-9]', '') = :comparableText
+        ";
+
+        return $this->getIdsFromSqlQuery($sqlToSelectIds, ['comparableText' => $comparableText]);
     }
 
 
@@ -101,17 +112,6 @@ abstract class SEPRepository extends ServiceEntityRepository
         }
 
         return $stmt->executeQuery();
-    }
-
-
-    protected function increase(string $fieldName, int $entityId, int $increaseOf = 1) : void
-    {
-        $sqlQuery =
-            "UPDATE " . $this->getTableName() . " " .
-            "SET `" . $fieldName . "` = `" . $fieldName . "` + $increaseOf " .
-            "WHERE id = :id";
-
-        $this->sqlQueryExecute($sqlQuery, ["id" => $entityId]);
     }
     //</editor-fold>
 
@@ -130,9 +130,18 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="** 📝 Updaters **">
     public function countOneView(int $entityId) : void { $this->increase("views", $entityId); }
+
+    protected function increase(string $fieldName, int $entityId, int $increaseOf = 1) : void
+    {
+        $sqlQuery =
+            "UPDATE " . $this->getTableName() . " " .
+            "SET `" . $fieldName . "` = `" . $fieldName . "` + $increaseOf " .
+            "WHERE id = :id";
+
+        $this->sqlQueryExecute($sqlQuery, ["id" => $entityId]);
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** ⚡ Cached items ***">
@@ -250,8 +259,7 @@ abstract class SEPRepository extends ServiceEntityRepository
 
     public function getAllComplete() : array
     {
-        return
-            $this->arrAllEntitiesCache = $this->arrEntityCache = $this->internalGetAll($this->getQueryBuilderComplete());
+        return $this->arrAllEntitiesCache = $this->arrEntityCache = $this->internalGetAll($this->getQueryBuilderComplete());
     }
 
     protected function internalGetAll(QueryBuilder $qb) : array
