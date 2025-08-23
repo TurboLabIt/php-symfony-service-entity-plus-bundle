@@ -222,11 +222,14 @@ abstract class SEPRepository extends ServiceEntityRepository
 
     protected function internalGetById(QueryBuilder $qb, array $arrIds) : array
     {
-        if( empty($arrIds) ) {
+        $arrIdsToLoad = array_unique($arrIds);
+        $arrIdsToLoad = array_filter($arrIdsToLoad);
+
+        if( empty($arrIdsToLoad) ) {
             return [];
         }
 
-        $arrFromCache = $this->getFromCache($arrIds);
+        $arrFromCache = $this->getFromCache($arrIdsToLoad);
         if( !empty($arrFromCache) ) {
             return $arrFromCache;
         }
@@ -234,11 +237,11 @@ abstract class SEPRepository extends ServiceEntityRepository
         $arrEntitiesUnorderd =
             $qb
                 ->andWhere(static::ID_FIELD . ' IN(:ids)')
-                    ->setParameter('ids', $arrIds)
+                    ->setParameter('ids', $arrIdsToLoad)
                 ->getQuery()->getResult();
 
         $arrEntities = [];
-        foreach($arrIds as $id) {
+        foreach($arrIdsToLoad as $id) {
 
             $id = (string)$id;
 
