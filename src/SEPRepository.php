@@ -12,6 +12,7 @@ abstract class SEPRepository extends ServiceEntityRepository
     const string ENTITY_CLASS               = '';
     const string ID_FIELD                   = 't.id';
     const string DEFAULT_INDEXED_BY         = 't.id';
+    const string TITLE_FIELD                = 't.title';
     const string DEFAULT_ORDER_BY           = '';
     const string DEFAULT_ORDER_DIRECTION    = 'DESC';
 
@@ -220,6 +221,7 @@ abstract class SEPRepository extends ServiceEntityRepository
         return $arrResults;
     }
 
+
     protected function internalGetById(QueryBuilder $qb, array $arrIds) : array
     {
         $arrIdsToLoad = array_unique($arrIds);
@@ -255,6 +257,66 @@ abstract class SEPRepository extends ServiceEntityRepository
         return $arrEntities;
     }
     //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="*** 🔎 get by title ***">
+    public function getOneByTitle(string $title) : mixed
+    {
+        $arrItems = $this->getByTitle([$title]);
+        return reset($arrItems);
+    }
+
+
+    public function getOneByTitleComplete(string $title) : mixed
+    {
+        $arrItems = $this->getByTitleComplete([$title]);
+        return reset($arrItems);
+    }
+
+
+    public function getByTitle(array $arrTitles) : array { return $this->internalGetByTitle($this->getQueryBuilder(), $arrTitles); }
+
+
+    public function getByTitleComplete(array $arrTitles) : array
+    {
+        $arrResults = $this->internalGetByTitle($this->getQueryBuilderComplete(), $arrTitles);
+        $this->arrEntityCache = array_merge($this->arrEntityCache, $arrResults);
+        return $arrResults;
+    }
+
+
+    protected function internalGetByTitle(QueryBuilder $qb, array $arrTitles) : array
+    {
+        $arrTitlesToLoad = array_unique($arrTitles);
+        $arrTitlesToLoad = array_filter($arrTitlesToLoad);
+
+        if( empty($arrTitlesToLoad) ) {
+            return [];
+        }
+
+        $arrEntitiesUnorderd =
+            $qb
+                ->andWhere(static::TITLE_FIELD . ' IN(:titles)')
+                ->setParameter('titles', $arrTitlesToLoad)
+                ->getQuery()->getResult();
+
+        $arrEntities = [];
+        foreach($arrTitlesToLoad as $title) {
+
+            foreach($arrEntitiesUnorderd as $id => $entity) {
+
+                if( $title == $entity->getTitle() ) {
+
+                    $id = (string)$id;
+                    $arrEntities[$id] = $entity;
+                }
+            }
+        }
+
+        return $arrEntities;
+    }
+    //</editor-fold>
+
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 get all ***">
     public function getAll() : array { return $this->internalGetAll($this->getQueryBuilder()); }
