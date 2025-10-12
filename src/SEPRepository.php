@@ -145,6 +145,31 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="** 💾 Storage **">
+    public function save(mixed $entity, bool $persist = true) : static
+    {
+        $this->getEntityManager()->persist($entity);
+
+        if($persist) {
+            $this->getEntityManager()->flush();
+        }
+
+        return $this;
+    }
+
+
+    public function delete(mixed $entity, bool $persist = true) : static
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if($persist) {
+            $this->getEntityManager()->flush();
+        }
+
+        return $this;
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="*** ⚡ Cached items ***">
     protected function getFromCache(array $arrIds) : false|array
     {
@@ -258,7 +283,6 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
     //</editor-fold>
 
-
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 get by title ***">
     public function getOneByTitle(string $title) : mixed
     {
@@ -316,7 +340,6 @@ abstract class SEPRepository extends ServiceEntityRepository
         return $arrEntities;
     }
     //</editor-fold>
-
 
     //<editor-fold defaultstate="collapsed" desc="*** 🔎 get all ***">
     public function getAll() : array { return $this->internalGetAll($this->getQueryBuilder()); }
