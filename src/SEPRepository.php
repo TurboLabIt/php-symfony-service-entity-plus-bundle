@@ -82,6 +82,13 @@ abstract class SEPRepository extends ServiceEntityRepository
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ SQL ***">
+    public function countFromSqlQuery(string $sqlCountQuery, array $arrSqlSelectParams = []) : int
+    {
+        $result = $this->sqlQueryExecute($sqlCountQuery, $arrSqlSelectParams)->fetchFirstColumn();
+        return reset($result);
+    }
+
+
     public function getIdsFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : array
     {
         $arrIds = $this->sqlQueryExecute($sqlToSelectIds, $arrSqlSelectParams)->fetchFirstColumn();
