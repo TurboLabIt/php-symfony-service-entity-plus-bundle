@@ -1,6 +1,7 @@
 <?php
 namespace TurboLabIt\ServiceEntityPlusBundle;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use TurboLabIt\Foreachable\ForeachableCollection;
@@ -111,8 +112,27 @@ abstract class SEPCollection extends ForeachableCollection
     public function countTotalBeforePagination(): int { return $this->countTotalBeforePagination; }
     //</editor-fold>
 
-    // ⚠️ Implement the following abstract method as if they were uncommented
-    // (different types in signatures make an anctual abstract method unusable here)
-    // example here: https://github.com/TurboLabIt/TurboLab.it/blob/main/src/ServiceCollection/Cms/TagCollection.php
-    // abstract public function createService(?BaseEntity $entity = null) : BaseService;
+    //<editor-fold defaultstate="collapsed" desc="*** 🗄️ Repository ***">
+    public function getRepository() : ServiceEntityRepository { return $this->em->getRepository(static::ENTITY_CLASS); }
+    //</editor-fold>
+
+
+    /*
+    ⚠️ Implement the following methods as if they were uncommented (different types in signatures make an abstract method unusable here)
+        example here: https://github.com/TurboLabIt/TurboLab.it/blob/main/src/ServiceCollection/Cms/TagCollection.php
+
+    public function getRepository() : SpecificTypeRepository { return parent::getRepository(); }
+
+    public function createService(?SpecificTypeEntity $entity = null) : SpecificTypeService
+    {
+        return $this->factory->createTag($entity);
+        ... or ...
+        $service = new SpecificTypeService();
+        if( !empty($entity) ) {
+            $service->setEntity($entity);
+        }
+
+        return $service;
+    }
+    */
 }
