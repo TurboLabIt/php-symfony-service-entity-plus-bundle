@@ -2,6 +2,7 @@
 namespace TurboLabIt\ServiceEntityPlusBundle;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -35,9 +36,9 @@ abstract class SEPRepository extends ServiceEntityRepository
     protected function getQueryBuilderComplete() : QueryBuilder { return $this->getQueryBuilder(); }
 
 
-    public function getQueryBuilderFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : ?QueryBuilder
+    public function getQueryBuilderFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = [], array $arrSqlSelectParamsTypes = []) : ?QueryBuilder
     {
-        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams);
+        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams, $arrSqlSelectParamsTypes);
 
         if( empty($arrIds) ) {
             return null;
@@ -50,9 +51,9 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    public function getQueryBuilderCompleteFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : ?QueryBuilder
+    public function getQueryBuilderCompleteFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = [], array $arrSqlSelectParamsTypes = []) : ?QueryBuilder
     {
-        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams);
+        $arrIds = $this->getIdsFromSqlQuery($sqlToSelectIds, $arrSqlSelectParams, $arrSqlSelectParamsTypes);
 
         if( empty($arrIds) ) {
             return null;
@@ -82,16 +83,16 @@ abstract class SEPRepository extends ServiceEntityRepository
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="*** 🗄️ SQL ***">
-    public function countFromSqlQuery(string $sqlCountQuery, array $arrSqlSelectParams = []) : int
+    public function countFromSqlQuery(string $sqlCountQuery, array $arrSqlSelectParams = [], array $arrSqlSelectParamsTypes = []) : int
     {
-        $result = $this->sqlQueryExecute($sqlCountQuery, $arrSqlSelectParams)->fetchFirstColumn();
+        $result = $this->sqlQueryExecute($sqlCountQuery, $arrSqlSelectParams, $arrSqlSelectParamsTypes)->fetchFirstColumn();
         return reset($result);
     }
 
 
-    public function getIdsFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = []) : array
+    public function getIdsFromSqlQuery(string $sqlToSelectIds, array $arrSqlSelectParams = [], array $arrSqlSelectParamsTypes = []) : array
     {
-        $arrIds = $this->sqlQueryExecute($sqlToSelectIds, $arrSqlSelectParams)->fetchFirstColumn();
+        $arrIds = $this->sqlQueryExecute($sqlToSelectIds, $arrSqlSelectParams, $arrSqlSelectParamsTypes)->fetchFirstColumn();
 
         if( empty($arrIds) ) {
             return [];
@@ -112,11 +113,14 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = []) : Result
+    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = [], array $arrSqlSelectParamsTypes = []) : Result
     {
         $stmt = $this->getEntityManager()->getConnection()->prepare($sqlQuery);
+
         foreach($arrParams as $param => $value) {
-            $stmt->bindValue($param, $value);
+
+            $parameterType = $arrSqlSelectParamsTypes[":$param"] ?? $arrSqlSelectParamsTypes["$param"] ?? ParameterType::STRING;
+            $stmt->bindValue($param, $value, $parameterType);
         }
 
         return $stmt->executeQuery();
