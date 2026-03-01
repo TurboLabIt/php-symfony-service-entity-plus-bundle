@@ -113,17 +113,9 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = [], array $arrSqlSelectParamsTypes = []) : Result
+    protected function sqlQueryExecute(string $sqlQuery, array $arrParams = [], array $arrParamTypes = []) : Result
     {
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sqlQuery);
-
-        foreach($arrParams as $param => $value) {
-
-            $parameterType = $arrSqlSelectParamsTypes[":$param"] ?? $arrSqlSelectParamsTypes["$param"] ?? ParameterType::STRING;
-            $stmt->bindValue($param, $value, $parameterType);
-        }
-
-        return $stmt->executeQuery();
+        return $this->getEntityManager()->getConnection()->executeQuery($sqlQuery, $arrParams, $arrParamTypes);
     }
     //</editor-fold>
 
