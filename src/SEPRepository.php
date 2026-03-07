@@ -195,7 +195,7 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    public function selectOrNull(?int $id) : mixed
+    public function selectOrNull(int|string|null $id) : mixed
     {
         if( empty($id) ) {
             return null;
@@ -206,7 +206,7 @@ abstract class SEPRepository extends ServiceEntityRepository
     }
 
 
-    public function selectOrNew(?int $id) : mixed
+    public function selectOrNew(int|string|null $id) : mixed
     {
         $entity = $this->selectOrNull($id);
         if( !empty($entity) ) {
