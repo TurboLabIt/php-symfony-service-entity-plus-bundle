@@ -7,7 +7,6 @@ A new Symfony bundle to create "ServiceEntities".
 
 ````shell
 symfony composer require turbolabit/service-entity-plus-bundle:dev-main
-
 ````
 
 
@@ -20,7 +19,7 @@ symfony composer require turbolabit/service-entity-plus-bundle:dev-main
 3. Configure the constants (`ENTITY_CLASS` is mandatory)
 4. [Use the functions](https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/blob/main/src/SEPRepository.php)
 
-[🔖 Production-grade example](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/Cms/ArticleRepository.php)
+🔖 [Production-grade example](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/Cms/ArticleRepository.php)
 
 
 ### ServiceCollection:
@@ -30,12 +29,24 @@ symfony composer require turbolabit/service-entity-plus-bundle:dev-main
 3. Configure the constants (`ENTITY_CLASS` is mandatory)
 4. [Use the functions](https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/blob/main/src/SEPCollection.php)
 
-[🔖 Production-grade example](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/ServiceCollection/Cms/ArticleCollection.php)
+🔖 [Production-grade example](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/ServiceCollection/Cms/ArticleCollection.php)
+
+
+### Version00000000000000
+
+Create `migrations/Version00000000000000.php`:
+
+````php
+<?php
+namespace DoctrineMigrations;
+
+class Version00000000000000 extends \TurboLabIt\ServiceEntityPlusBundle\migrations\Version00000000000000 {}
+
+````
 
 
 ## 🧪 Test it
 
 ````shell
 bash scripts/symfony-bundle-tester.sh
-
 ````
