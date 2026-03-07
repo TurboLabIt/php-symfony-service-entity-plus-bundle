@@ -1,3 +1,5 @@
+LOCAL
+----
 <?php
 namespace TurboLabIt\ServiceEntityPlusBundle;
 
@@ -163,11 +165,16 @@ abstract class SEPRepository extends ServiceEntityRepository
 
     public function delete(mixed $entity, bool $persist = true) : static
     {
+        $id = $entity->getId();
+        
         $this->getEntityManager()->remove($entity);
 
         if($persist) {
             $this->getEntityManager()->flush();
         }
+
+        unset($this->arrEntityCache[$id]);
+        unset($this->arrAllEntitiesCache[$id]);
 
         return $this;
     }
