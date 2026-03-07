@@ -14,7 +14,19 @@ symfony composer require turbolabit/service-entity-plus-bundle:dev-main
 
 ### Repository:
 
-1. [Create you own abstract BaseRepository](https://github.com/TurboLabIt/TurboLab.it/blob/main/src/Repository/BaseRepository.php)
+1. Create you own `src/Repository/BaseRepository.php`:
+
+````php
+<?php
+namespace App\Repository;
+
+use TurboLabIt\ServiceEntityPlusBundle\SEPRepository;
+
+
+abstract class BaseRepository extends SEPRepository {}
+
+````
+
 2. Extend it
 3. Configure the constants (`ENTITY_CLASS` is mandatory)
 4. [Use the functions](https://github.com/TurboLabIt/php-symfony-service-entity-plus-bundle/blob/main/src/SEPRepository.php)
