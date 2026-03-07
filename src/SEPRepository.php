@@ -1,5 +1,3 @@
-LOCAL
-----
 <?php
 namespace TurboLabIt\ServiceEntityPlusBundle;
 
