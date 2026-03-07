@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace DoctrineMigrations;
+namespace TurboLabIt\ServiceEntityPlusBundle\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
