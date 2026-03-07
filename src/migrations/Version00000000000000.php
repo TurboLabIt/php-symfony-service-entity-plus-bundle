@@ -47,5 +47,5 @@ abstract class Version00000000000000 extends AbstractMigration
 
 
     // prevent User Deprecated: Context: trying to commit a transaction Problem: the transaction is already committed, relying on silencing is deprecated
-    // public function isTransactional(): bool { return false; }
+    public function isTransactional(): bool { return false; }
 }
