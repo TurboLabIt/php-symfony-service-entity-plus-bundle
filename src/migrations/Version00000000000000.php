@@ -8,6 +8,9 @@ use Doctrine\Migrations\Exception\IrreversibleMigration;
 
 abstract class Version00000000000000 extends AbstractMigration
 {
+    public function getDescription() : string { return '☣️ Clean-slate, startup migration'; }
+
+
     public function up(Schema $schema): void
     {
         $this->addSql('SET FOREIGN_KEY_CHECKS = 0');
@@ -39,7 +42,7 @@ abstract class Version00000000000000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        throw new IrreversibleMigration('Version00000000000000 is a cleanup migration and cannot be reverted.');
+        throw new IrreversibleMigration('Version00000000000000 is a clean-slate migration and cannot be reverted.');
     }
 
 
