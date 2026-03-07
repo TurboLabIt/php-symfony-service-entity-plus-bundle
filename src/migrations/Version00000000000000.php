@@ -6,7 +6,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Doctrine\Migrations\Exception\IrreversibleMigration;
 
 
-final class Version00000000000000 extends AbstractMigration
+abstract class Version00000000000000 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
