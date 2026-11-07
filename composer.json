@@ -27,5 +27,12 @@
     "symfony/dotenv": "@stable",
     "symfony/yaml": "@stable",
     "phpunit/phpunit": "@stable"
+  },
+  "config": {
+    "policy": {
+      "cooldown": {
+        "period": "5 days"
+      }
+    }
   }
 }
