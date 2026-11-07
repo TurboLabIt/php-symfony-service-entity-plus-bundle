@@ -6,16 +6,17 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Result;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 
 abstract class SEPRepository extends ServiceEntityRepository
 {
-    const string ENTITY_CLASS               = '';
-    const string ID_FIELD                   = 't.id';
-    const string DEFAULT_INDEXED_BY         = 't.id';
-    const string TITLE_FIELD                = 't.title';
-    const string DEFAULT_ORDER_BY           = '';
-    const string DEFAULT_ORDER_DIRECTION    = 'DESC';
+    const string ENTITY_CLASS                   = '';
+    const string ID_FIELD                       = 't.id';
+    const string DEFAULT_INDEXED_BY             = 't.id';
+    const string TITLE_FIELD                    = 't.title';
+    const string DEFAULT_ORDER_BY               = '';
+    const SortDirection DEFAULT_ORDER_DIRECTION = SortDirection::Descending;
 
     //<editor-fold defaultstate="collapsed" desc="*** 🍹 Class properties ***">
     protected array $arrEntityCache         = [];
